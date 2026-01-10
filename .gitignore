@@ -1,0 +1,4 @@
+doc/
+battleship
+.DS_Store
+*.o

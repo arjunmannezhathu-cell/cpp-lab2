@@ -25,7 +25,7 @@ int OpponentGrid::getColumns() const { return columns; }
 
 /**
  * Records the result of a shot we fired.
- * If we sink a ship, we run a special search to find out exactly where
+ * If we sink a ship, we run a search to find out exactly where
  * that ship was based on our previous 'HIT' records.
  */
 void OpponentGrid::shotResult(const Shot &shot, Shot::Impact impact) {
@@ -38,14 +38,14 @@ void OpponentGrid::shotResult(const Shot &shot, Shot::Impact impact) {
     shipPositions.insert(
         target); // The square we just hit is definitely part of it
 
-    char shipRow = target.getRow();
-    int shipCol = target.getColumn();
+    char shipRow = target.getRow();   // Row of the ship
+    int shipCol = target.getColumn(); // Column of the ship
 
     bool isHorizontal = false;
 
     // 1. Look to the LEFT for more hits/sunk markers belonging to this ship
     for (int col = shipCol - 1; col >= 1; col--) {
-      GridPosition leftPos(shipRow, col);
+      GridPosition leftPos(shipRow, col); // Position to the left
       std::map<GridPosition, Shot::Impact>::iterator shotFindIt =
           shots.find(leftPos);
 
@@ -74,7 +74,7 @@ void OpponentGrid::shotResult(const Shot &shot, Shot::Impact impact) {
       }
     }
 
-    // 3. If we didn't find anything sideways, it MUST be a vertical ship
+    // 3. If we didn't find anything sideways, it should be a vertical ship
     if (!isHorizontal) {
       // Look UP
       for (char row = shipRow - 1; row >= 'A'; row--) {
@@ -95,11 +95,12 @@ void OpponentGrid::shotResult(const Shot &shot, Shot::Impact impact) {
       for (char row = shipRow + 1; row <= maxRow; row++) {
         GridPosition downPos(row, shipCol);
         std::map<GridPosition, Shot::Impact>::iterator shotFindIt =
-            shots.find(downPos);
+            shots.find(downPos); // here we are searching for the ship
 
         if (shotFindIt != shots.end() && (shotFindIt->second == Shot::HIT ||
                                           shotFindIt->second == Shot::SUNKEN)) {
-          shipPositions.insert(downPos);
+          shipPositions.insert(
+              downPos); // here we are inserting the ships positions
         } else {
           break;
         }
@@ -120,8 +121,8 @@ void OpponentGrid::shotResult(const Shot &shot, Shot::Impact impact) {
 
 const std::map<GridPosition, Shot::Impact> &OpponentGrid::getShotsAt() const {
   return shots;
-}
+} // here we are returning the shots
 
 const std::vector<Ship> &OpponentGrid::getSunkenShips() const {
   return sunkenShips;
-}
+} // here we are returning the sunken ships

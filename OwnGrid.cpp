@@ -103,23 +103,24 @@ Shot::Impact OwnGrid::takeBlow(const Shot &shot) {
   GridPosition target = shot.getTargetPosition();
   shotAt.insert(target); // Record where they shot
 
-  // Look through our fleet to see if they hit anything
+  // we look through our fleet to see if they hit anything
   for (std::vector<Ship>::const_iterator shipIt = ships.begin();
        shipIt != ships.end(); ++shipIt) {
     const Ship &ship = *shipIt;
     std::set<GridPosition> occupied = ship.occupiedArea();
 
     if (occupied.count(target) > 0) {
-      // It's a Hit! Now check if that whole ship is now destroyed.
-      int hitCount = 0;
+      // shot hit a ship. Now we check if that whole ship is now destroyed.
+      int hitCount = 0; // Count of hits on this ship
 
+      // here we count how many hits we have on this ship
       for (std::set<GridPosition>::const_iterator posIt = occupied.begin();
            posIt != occupied.end(); ++posIt) {
         if (shotAt.count(*posIt) > 0) {
           hitCount++;
         }
       }
-
+      // If all the cells are hits, the ship is sunk
       if (hitCount == ship.length()) {
         return Shot::SUNKEN;
       } else {
@@ -128,7 +129,7 @@ Shot::Impact OwnGrid::takeBlow(const Shot &shot) {
     }
   }
 
-  // Splash!
+  // return miss
   return Shot::NONE;
 }
 

@@ -94,7 +94,7 @@ std::set<GridPosition> Ship::occupiedArea() const {
 }
 
 /**
- * Returns the ship's occupied area PLUS all the squares right next to it.
+ * Returns the ship's occupied area and all the squares right next to it.
  * This is used to make sure ships don't touch each other.
  */
 std::set<GridPosition> Ship::blockedArea() const {
@@ -112,8 +112,9 @@ std::set<GridPosition> Ship::blockedArea() const {
         char newRow = gridPos.getRow() + rowOffset;
         int newCol = gridPos.getColumn() + colOffset;
 
-        // We don't worry about being 'out of bounds' here,
-        // because the GridPosition constructor handles safe/invalid values.
+        // here we do not worry about being out of bounds or invalid values
+        // here, because the GridPosition constructor handles safe/invalid
+        // values.
         blocked.insert(GridPosition(newRow, newCol));
       }
     }

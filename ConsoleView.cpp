@@ -2,8 +2,8 @@
  * @file ConsoleView.cpp
  * @brief Implementation of the ConsoleView class.
  *
- * This file is responsible for drawing our game boards in the console.
- * It takes our complex Board data and turns it into readable text symbols.
+ * This file is responsible for drawing the game boards in the console.
+ * It takes the Board data and turns it into readable text symbols.
  */
 
 #include "ConsoleView.h"
@@ -14,8 +14,8 @@
 ConsoleView::ConsoleView(Board *board) { this->board = board; }
 
 /**
- * The main 'render' function. It builds two text-based grids side-by-side
- * and prints them.
+ * The main render function. It builds two  grids side-by-side
+ * and print them.
  */
 void ConsoleView::print() {
   int rows = board->getRows();

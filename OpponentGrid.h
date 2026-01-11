@@ -1,6 +1,9 @@
 /**
  * @file OpponentGrid.h
- * @brief Tracks shots at opponent's grid
+ * @brief Header for the OpponentGrid class.
+ *
+ * This class tracks what we know about the opponent's board based
+ * on the shots we've fired.
  */
 
 #ifndef OPPONENTGRID_H_
@@ -13,49 +16,51 @@
 #include <vector>
 
 /**
- * @brief Opponent's grid from our perspective
+ * @class OpponentGrid
+ * @brief Represents the opponent's side of the game.
  *
- * Tracks our shots and deduces sunken ships
+ * Since we can't see their ships, we record 'HIT' or 'MISS' for every square
+ * we attack. When we sink a ship, we try to reconstruct its full position.
  */
 class OpponentGrid {
 private:
-  /// Number of rows
-  int rows;
+  int rows;    ///< Height of the grid
+  int columns; ///< Width of the grid
 
-  /// Number of columns
-  int columns;
-
-  /// Our shots and their results
-  std::map<GridPosition, Shot::Impact> shots;
-
-  /// Ships we've sunk
-  std::vector<Ship> sunkenShips;
+  std::map<GridPosition, Shot::Impact> shots; ///< History of our attacks
+  std::vector<Ship> sunkenShips; ///< Ships we've successfully destroyed
 
 public:
   /**
-   * @brief Create grid with given size
+   * @brief Create a grid to track an opponent of a certain size.
    */
   OpponentGrid(int rows, int columns);
 
-  /// @brief Get number of rows
+  /**
+   * @brief Get height of the board.
+   */
   int getRows() const;
 
-  /// @brief Get number of columns
+  /**
+   * @brief Get width of the board.
+   */
   int getColumns() const;
 
   /**
-   * @brief Record result of a shot
-   *
-   * If SUNKEN, we figure out where the ship was
-   * @param shot The shot we fired
-   * @param impact What happened (NONE/HIT/SUNKEN)
+   * @brief Call this after firing a shot to record what happened.
+   * @param shot The shot we fired.
+   * @param impact The result (NONE, HIT, or SUNKEN).
    */
   void shotResult(const Shot &shot, Shot::Impact impact);
 
-  /// @brief Get all our shots
+  /**
+   * @brief Get all shots we've fired so far.
+   */
   const std::map<GridPosition, Shot::Impact> &getShotsAt() const;
 
-  /// @brief Get sunken ships we found
+  /**
+   * @brief Get the list of all opponent ships we've sunk.
+   */
   const std::vector<Ship> &getSunkenShips() const;
 };
 

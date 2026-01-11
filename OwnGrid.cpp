@@ -1,13 +1,19 @@
 /**
  * @file OwnGrid.cpp
- * @brief Implementation of OwnGrid class
+ * @brief Implementation of the OwnGrid class.
+ *
+ * This file handles your side of the board: placing your fleet and
+ * recording where the opponent has attacked you.
  */
 
 #include "OwnGrid.h"
 
+/**
+ * Creates your grid and sets the initial fleet limits.
+ * Default rules: 1x Carrier(5), 2x Battleships(4), 3x Destroyers(3), 4x
+ * Submarines(2).
+ */
 OwnGrid::OwnGrid(int rows, int columns) : rows(rows), columns(columns) {
-  // Initialize ship counts
-  // 1x Carrier (5), 2x Battleship (4), 3x Destroyer (3), 4x Submarine (2)
   availableShips[5] = 1;
   availableShips[4] = 2;
   availableShips[3] = 3;
@@ -18,13 +24,17 @@ int OwnGrid::getRows() const { return rows; }
 
 int OwnGrid::getColumns() const { return columns; }
 
+/**
+ * The logic for placing a ship on your grid.
+ * It checks a lot of rules to make sure the placement is legal.
+ */
 bool OwnGrid::placeShip(const Ship &ship) {
-  // Check if ship itself is valid
+  // 1. Is the ship even valid (straight, right size)?
   if (!ship.isValid()) {
     return false;
   }
 
-  // Check if we can still place this length
+  // 2. Do we have any of this type of ship left to place?
   int shipLength = ship.length();
   std::map<int, int>::iterator countIt = availableShips.find(shipLength);
 
@@ -34,22 +44,23 @@ bool OwnGrid::placeShip(const Ship &ship) {
 
   std::set<GridPosition> newShipArea = ship.occupiedArea();
 
-  // Check bounds
+  // 3. Does it fit within the board's dimensions?
   for (std::set<GridPosition>::const_iterator posIt = newShipArea.begin();
        posIt != newShipArea.end(); ++posIt) {
     const GridPosition &currentPos = *posIt;
 
     char maxRow = 'A' + rows - 1;
     if (currentPos.getRow() < 'A' || currentPos.getRow() > maxRow) {
-      return false;
+      return false; // Row out of bounds
     }
 
     if (currentPos.getColumn() < 1 || currentPos.getColumn() > columns) {
-      return false;
+      return false; // Column out of bounds
     }
   }
 
-  // Check if ship touches any existing ship
+  // 4. Does it touch or overlap any existing ships?
+  // We check against the 'blockedArea' of all currently placed ships.
   for (std::vector<Ship>::const_iterator shipIt = ships.begin();
        shipIt != ships.end(); ++shipIt) {
     const Ship &existingShip = *shipIt;
@@ -58,32 +69,36 @@ bool OwnGrid::placeShip(const Ship &ship) {
     for (std::set<GridPosition>::const_iterator posIt = newShipArea.begin();
          posIt != newShipArea.end(); ++posIt) {
       if (blockedArea.count(*posIt) > 0) {
-        return false;
+        return false; // Too close to another ship!
       }
     }
   }
 
-  // All checks passed - add the ship
+  // If we got here, the placement is legal!
   ships.push_back(ship);
-  availableShips[shipLength]--;
+  availableShips[shipLength]--; // Use up one from our 'inventory'
 
   return true;
 }
 
 std::vector<Ship> OwnGrid::getShips() const { return ships; }
 
+/**
+ * Handles what happens when a shot lands on your grid.
+ * It records the shot and checks if it hit or sank anything.
+ */
 Shot::Impact OwnGrid::takeBlow(const Shot &shot) {
   GridPosition target = shot.getTargetPosition();
-  shotAt.insert(target);
+  shotAt.insert(target); // Record where they shot
 
-  // Check each ship for hit
+  // Look through our fleet to see if they hit anything
   for (std::vector<Ship>::const_iterator shipIt = ships.begin();
        shipIt != ships.end(); ++shipIt) {
     const Ship &ship = *shipIt;
     std::set<GridPosition> occupied = ship.occupiedArea();
 
     if (occupied.count(target) > 0) {
-      // Hit! Check if ship is sunk
+      // It's a Hit! Now check if that whole ship is now destroyed.
       int hitCount = 0;
 
       for (std::set<GridPosition>::const_iterator posIt = occupied.begin();
@@ -101,6 +116,7 @@ Shot::Impact OwnGrid::takeBlow(const Shot &shot) {
     }
   }
 
+  // Splash!
   return Shot::NONE;
 }
 

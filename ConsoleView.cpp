@@ -1,6 +1,9 @@
 /**
  * @file ConsoleView.cpp
- * @brief Implementation of ConsoleView class
+ * @brief Implementation of the ConsoleView class.
+ *
+ * This file is responsible for drawing our game boards in the console.
+ * It takes our complex Board data and turns it into readable text symbols.
  */
 
 #include "ConsoleView.h"
@@ -10,21 +13,25 @@
 
 ConsoleView::ConsoleView(Board *board) : board(board) {}
 
+/**
+ * The main 'render' function. It builds two text-based grids side-by-side
+ * and prints them.
+ */
 void ConsoleView::print() {
   int rows = board->getRows();
   int columns = board->getColumns();
 
-  // Create char arrays for both grids
+  // We use 2D character vectors to build the display layers first
   std::vector<std::vector<char>> ownGridDisplay(rows);
   std::vector<std::vector<char>> opponentGridDisplay(rows);
 
-  // Initialize with water
+  // Layer 1: Fill everything with water ('~')
   for (int rowIdx = 0; rowIdx < rows; rowIdx++) {
     ownGridDisplay[rowIdx].resize(columns, '~');
     opponentGridDisplay[rowIdx].resize(columns, '~');
   }
 
-  // Mark ships on own grid
+  // Layer 2 (Own Grid): Draw our ships ('#')
   OwnGrid &ownGrid = board->getOwnGrid();
   std::vector<Ship> ships = ownGrid.getShips();
 
@@ -43,7 +50,7 @@ void ConsoleView::print() {
     }
   }
 
-  // Mark hits and misses on own grid
+  // Layer 3 (Own Grid): Overwrite with opponent's hits ('O') and misses ('^')
   const std::set<GridPosition> &ownShotAt = ownGrid.getShotAt();
 
   for (std::set<GridPosition>::const_iterator shotIt = ownShotAt.begin();
@@ -53,14 +60,14 @@ void ConsoleView::print() {
 
     if (row >= 0 && row < rows && col >= 0 && col < columns) {
       if (ownGridDisplay[row][col] == '#') {
-        ownGridDisplay[row][col] = 'O'; // Hit
+        ownGridDisplay[row][col] = 'O'; // They hit our ship!
       } else {
-        ownGridDisplay[row][col] = '^'; // Miss
+        ownGridDisplay[row][col] = '^'; // They hit water.
       }
     }
   }
 
-  // Mark sunken ships on opponent grid
+  // Layer 2 (Opponent Grid): Draw ships we've successfully SUNK ('#')
   OpponentGrid &opponentGrid = board->getOpponentGrid();
   const std::vector<Ship> &sunkenShips = opponentGrid.getSunkenShips();
 
@@ -79,7 +86,7 @@ void ConsoleView::print() {
     }
   }
 
-  // Mark shots on opponent grid
+  // Layer 3 (Opponent Grid): Draw our hits ('O') and misses ('^')
   const std::map<GridPosition, Shot::Impact> &opponentShots =
       opponentGrid.getShotsAt();
 
@@ -91,17 +98,19 @@ void ConsoleView::print() {
 
     if (row >= 0 && row < rows && col >= 0 && col < columns) {
       if (shotIt->second == Shot::NONE) {
-        opponentGridDisplay[row][col] = '^'; // Miss
+        opponentGridDisplay[row][col] = '^'; // We missed.
       } else if (shotIt->second == Shot::HIT ||
                  shotIt->second == Shot::SUNKEN) {
+        // Only mark 'O' if we haven't already marked the whole ship '#'
         if (opponentGridDisplay[row][col] != '#') {
-          opponentGridDisplay[row][col] = 'O'; // Hit
+          opponentGridDisplay[row][col] =
+              'O'; // We hit but it's not sunken (yet).
         }
       }
     }
   }
 
-  // Print column headers
+  // Now, print everything to the console with column headers
   std::cout << "  ";
   for (int col = 1; col <= columns; col++) {
     std::cout << (col % 10) << " ";
@@ -112,22 +121,22 @@ void ConsoleView::print() {
   }
   std::cout << std::endl;
 
-  // Print each row
-  for (int row = 0; row < rows; row++) {
-    char rowLetter = 'A' + row;
+  // Print each row, starting with the row letter (A, B, C...)
+  for (int rowIdx = 0; rowIdx < rows; rowIdx++) {
+    char rowLetter = 'A' + rowIdx;
 
-    // Own grid
+    // Drawing OUR board (Left side)
     std::cout << rowLetter << " ";
-    for (int col = 0; col < columns; col++) {
-      std::cout << ownGridDisplay[row][col] << " ";
+    for (int colIdx = 0; colIdx < columns; colIdx++) {
+      std::cout << ownGridDisplay[rowIdx][colIdx] << " ";
     }
 
     std::cout << "  ";
 
-    // Opponent grid
+    // Drawing THE ENEMY board (Right side)
     std::cout << rowLetter << " ";
-    for (int col = 0; col < columns; col++) {
-      std::cout << opponentGridDisplay[row][col] << " ";
+    for (int colIdx = 0; colIdx < columns; colIdx++) {
+      std::cout << opponentGridDisplay[rowIdx][colIdx] << " ";
     }
 
     std::cout << std::endl;

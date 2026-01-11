@@ -1,6 +1,9 @@
 /**
  * @file Ship.h
- * @brief Represents a ship in the battleship game
+ * @brief Header for the Ship class.
+ *
+ * Defines what a ship is (bow and stern positions) and the rules for
+ * how it occupies space.
  */
 
 #ifndef SHIP_H_
@@ -10,50 +13,51 @@
 #include <set>
 
 /**
- * @brief A ship on the grid with bow and stern positions
+ * @class Ship
+ * @brief Represents a single ship on the grid.
  *
- * Immutable - position can't change after creation
+ * Ships are immutable. A ship knows its occupied area (the squares it covers)
+ * and its blocked area (occupied area plus a 1-square buffer).
  */
 class Ship {
 private:
-  /// Front of the ship
-  GridPosition bow;
-
-  /// Back of the ship
-  GridPosition stern;
+  GridPosition bow;   ///< Start coordinate
+  GridPosition stern; ///< End coordinate
 
 public:
   /**
-   * @brief Create a ship from bow to stern
-   * @param bow Front position
-   * @param stern Back position
+   * @brief Create a ship from a bow and stern position.
    */
   Ship(const GridPosition &bow, const GridPosition &stern);
 
   /**
-   * @brief Check if ship is valid
-   * Must be horizontal/vertical, length 2-5
+   * @brief Check if the ship follows the placement rules (straight, valid
+   * size).
    */
   bool isValid() const;
 
-  /// @brief Get bow position
+  /**
+   * @brief Get the bow (start) position.
+   */
   GridPosition getBow() const;
 
-  /// @brief Get stern position
+  /**
+   * @brief Get the stern (end) position.
+   */
   GridPosition getStern() const;
 
-  /// @brief Calculate length of ship
+  /**
+   * @brief Calculate how many squares the ship is long.
+   */
   int length() const;
 
   /**
-   * @brief Get all positions this ship occupies
-   * @return Set of grid positions
+   * @brief Get every single coordinate the ship physically covers.
    */
   std::set<GridPosition> occupiedArea() const;
 
   /**
-   * @brief Get occupied area plus surrounding positions
-   * Used to check if ships touch each other
+   * @brief Get the ship's area plus all surrounding neighbor squares.
    */
   std::set<GridPosition> blockedArea() const;
 };

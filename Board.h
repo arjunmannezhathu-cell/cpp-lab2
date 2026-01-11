@@ -1,6 +1,9 @@
 /**
  * @file Board.h
- * @brief Main game board combining both grids
+ * @brief Header for the Board class.
+ *
+ * The Board is the container that holds both the OwnGrid (your ships)
+ * and the OpponentGrid (your tracker).
  */
 
 #ifndef BOARD_H_
@@ -10,34 +13,43 @@
 #include "OwnGrid.h"
 
 /**
- * @brief The game board from one player's view
+ * @class Board
+ * @brief Represents a player's entire view of the game.
  *
- * Has our grid (with ships) and opponent grid (for tracking shots)
+ * Every player has one Board. It contains their own fleet and their
+ * knowledge of the enemy's fleet.
  */
 class Board {
 private:
-  /// Our ships go here
-  OwnGrid ownGrid;
-
-  /// Track shots at opponent
-  OpponentGrid opponentGrid;
+  OwnGrid ownGrid;           ///< Where our ships are placed
+  OpponentGrid opponentGrid; ///< Where we track our attacks on the enemy
 
 public:
   /**
-   * @brief Create board with given size
+   * @brief Create a new game board.
+   * @param rows Height of the board.
+   * @param columns Width of the board.
    */
   Board(int rows, int columns);
 
-  /// @brief Get number of rows
+  /**
+   * @brief Get height of the game area.
+   */
   int getRows() const;
 
-  /// @brief Get number of columns
+  /**
+   * @brief Get width of the game area.
+   */
   int getColumns() const;
 
-  /// @brief Get our grid
+  /**
+   * @brief Get access to our own fleet grid.
+   */
   OwnGrid &getOwnGrid();
 
-  /// @brief Get opponent grid
+  /**
+   * @brief Get access to our record of the opponent's board.
+   */
   OpponentGrid &getOpponentGrid();
 };
 

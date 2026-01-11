@@ -1,6 +1,9 @@
 /**
  * @file OwnGrid.h
- * @brief Player's own grid for ship placement
+ * @brief Header for the OwnGrid class.
+ *
+ * Manages the player's own grid, including ship placement and
+ * recording incoming shots.
  */
 
 #ifndef OWNGRID_H_
@@ -13,61 +16,57 @@
 #include <vector>
 
 /**
- * @brief The player's own grid
+ * @class OwnGrid
+ * @brief Represents your side of the board.
  *
- * Used to place ships and track incoming shots
+ * Tracks your ships and where you've been hit. It enforces rules
+ * for ship placement.
  */
 class OwnGrid {
 private:
-  /// Number of rows
-  int rows;
+  int rows;    ///< Total rows (usually 10)
+  int columns; ///< Total columns (usually 10)
 
-  /// Number of columns
-  int columns;
-
-  /// Ships placed on the grid
-  std::vector<Ship> ships;
-
-  /// Positions that have been shot at
-  std::set<GridPosition> shotAt;
-
-  /// Available ships: length -> count remaining
-  std::map<int, int> availableShips;
+  std::vector<Ship> ships;           ///< Our placed fleet
+  std::set<GridPosition> shotAt;     ///< Where the opponent shot us
+  std::map<int, int> availableShips; ///< How many of each ship type are left
 
 public:
   /**
-   * @brief Create grid with given size
-   * @param rows Number of rows
-   * @param columns Number of columns
+   * @brief Create a grid with specific dimensions.
    */
   OwnGrid(int rows, int columns);
 
-  /// @brief Get number of rows
+  /**
+   * @brief Get height of the board.
+   */
   int getRows() const;
 
-  /// @brief Get number of columns
+  /**
+   * @brief Get width of the board.
+   */
   int getColumns() const;
 
   /**
-   * @brief Try to place a ship on the grid
-   *
-   * Checks all placement rules (no touching, count limits, etc)
-   * @param ship Ship to place
-   * @return true if placed successfully
+   * @brief Try to place a ship on the board.
+   * @return True if placement was legal and successful.
    */
   bool placeShip(const Ship &ship);
 
-  /// @brief Get all ships on grid
+  /**
+   * @brief Get the list of all our placed ships.
+   */
   std::vector<Ship> getShips() const;
 
   /**
-   * @brief Process incoming shot from opponent
-   * @param shot The incoming shot
-   * @return NONE if miss, HIT if hit, SUNKEN if ship sunk
+   * @brief Process a shot from the opponent.
+   * @return NONE, HIT, or SUNKEN.
    */
   Shot::Impact takeBlow(const Shot &shot);
 
-  /// @brief Get all positions shot at
+  /**
+   * @brief Get the set of all coordinates where the opponent shot us.
+   */
   const std::set<GridPosition> &getShotAt() const;
 };
 

@@ -1,6 +1,8 @@
 /**
  * @file ConsoleView.h
- * @brief Displays the board on console
+ * @brief Header for the ConsoleView class.
+ *
+ * Handles printing the game state to the standard terminal output.
  */
 
 #ifndef CONSOLEVIEW_H_
@@ -9,26 +11,26 @@
 #include "Board.h"
 
 /**
- * @brief Shows the game state on console
+ * @class ConsoleView
+ * @brief The 'painter' of the board.
  *
- * Displays both grids side by side
+ * It takes a Board and renders a text visualization.
+ * Symbols used: '~' is water, '#' is a ship, 'O' is a hit ship, and '^' is a
+ * miss.
  */
 class ConsoleView {
 private:
-  /// Pointer to the board we display
-  Board *board;
+  Board *board; ///< The board we are currently visualizing
 
 public:
   /**
-   * @brief Create view for given board
-   * @param board Board to display
+   * @brief Connect the view to a specific board.
    */
   ConsoleView(Board *board);
 
   /**
-   * @brief Print both grids to console
-   *
-   * Symbols: ~ water, # ship, O hit, ^ miss
+   * @brief Draw the entire board (own grid and opponent tracker) to the
+   * console.
    */
   void print();
 };

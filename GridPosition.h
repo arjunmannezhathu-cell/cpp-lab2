@@ -1,6 +1,9 @@
 /**
  * @file GridPosition.h
- * @brief Represents a position on the battleship grid
+ * @brief Header for the GridPosition class.
+ *
+ * Defines a simple coordinate system (Row Letter, Column Number)
+ * for our Battleship board.
  */
 
 #ifndef GRIDPOSITION_H_
@@ -9,57 +12,61 @@
 #include <string>
 
 /**
- * @brief A position on the game board (like "B10")
+ * @class GridPosition
+ * @brief Represents a single square on the board.
  *
- * Immutable class - can't change after creation
+ * Each position is immutable (once created, it shouldn't change).
+ * It's the most basic building block used to place ships and take shots.
  */
 class GridPosition {
 private:
-  /// Row letter ('A' to 'Z')
-  char row;
-
-  /// Column number (starts at 1)
-  int column;
+  char row;   ///< Row letter (e.g., 'A', 'B', etc.)
+  int column; ///< Column number (e.g., 1, 2, 3, etc.)
 
 public:
   /**
-   * @brief Create position from row and column
-   * @param row Row letter
-   * @param column Column number
+   * @brief Build a position from a character and an integer.
+   * @param row The row letter.
+   * @param column The column number.
    */
   GridPosition(char row, int column);
 
   /**
-   * @brief Create position from string like "B10"
-   * @param position String representation
+   * @brief Build a position from a string like "B10".
+   * @param position String representation of the coordinate.
    */
   GridPosition(std::string position);
 
   /**
-   * @brief Check if position is valid
-   * @return true if 'A' <= row <= 'Z' and column > 0
+   * @brief Is this position actually a legal spot on a board?
+   * @return True if row is A-Z and column > 0.
    */
   bool isValid() const;
 
-  /// @brief Get the row letter
+  /**
+   * @brief Get the row letter.
+   */
   char getRow() const;
 
-  /// @brief Get the column number
+  /**
+   * @brief Get the column number.
+   */
   int getColumn() const;
 
   /**
-   * @brief Convert to string (e.g. "B10")
+   * @brief Let the computer treat this object like a string (e.g., "A1").
    */
   operator std::string() const;
 
   /**
-   * @brief Check if two positions are equal
+   * @brief Check if this position is the same as another.
    */
   bool operator==(const GridPosition &other) const;
 
   /**
-   * @brief Compare positions for ordering
-   * Needed for std::set and std::map
+   * @brief Comparison tool needed so we can put positions in a 'set' or 'map'.
+   *
+   * It sorts coordinates from top-to-bottom and left-to-right.
    */
   bool operator<(const GridPosition &other) const;
 };

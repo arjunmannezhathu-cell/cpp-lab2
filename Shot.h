@@ -1,6 +1,8 @@
 /**
  * @file Shot.h
- * @brief Represents a shot in the game
+ * @brief Header for the Shot class.
+ *
+ * Defines what a shot is and the possible outcomes when it hits a grid.
  */
 
 #ifndef SHOT_H_
@@ -9,31 +11,32 @@
 #include "GridPosition.h"
 
 /**
- * @brief A shot at a grid position
+ * @class Shot
+ * @brief Represents a single attack on a grid square.
  */
 class Shot {
 public:
   /**
-   * @brief Result of a shot
+   * @brief The possible results of an attack.
    */
   enum Impact {
-    NONE,  ///< Missed
-    HIT,   ///< Hit but not sunk
-    SUNKEN ///< Ship sunk
+    NONE,  ///< The shot hit water (Miss)
+    HIT,   ///< The shot hit a ship segment
+    SUNKEN ///< The shot hit the final segment, destroying the ship
   };
 
 private:
-  /// Where the shot was aimed
-  GridPosition targetPosition;
+  GridPosition targetPosition; ///< The target coordinate
 
 public:
   /**
-   * @brief Create a shot at given position
-   * @param targetPosition Where to shoot
+   * @brief Create a shot at a specific position.
    */
   Shot(GridPosition targetPosition);
 
-  /// @brief Get the target position
+  /**
+   * @brief Get the location being attacked.
+   */
   GridPosition getTargetPosition() const;
 };
 

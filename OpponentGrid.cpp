@@ -1,6 +1,9 @@
 /**
  * @file OpponentGrid.cpp
- * @brief Implementation of OpponentGrid class
+ * @brief Implementation of the OpponentGrid class.
+ *
+ * This is our 'tracker' grid. We use it to remember where we've shot
+ * the opponent and to piece together where their ships were once we sink them.
  */
 
 #include "OpponentGrid.h"
@@ -13,21 +16,27 @@ int OpponentGrid::getRows() const { return rows; }
 
 int OpponentGrid::getColumns() const { return columns; }
 
+/**
+ * Records the result of a shot we fired.
+ * If we sink a ship, we run a special search to find out exactly where
+ * that ship was based on our previous 'HIT' records.
+ */
 void OpponentGrid::shotResult(const Shot &shot, Shot::Impact impact) {
   GridPosition target = shot.getTargetPosition();
   shots[target] = impact;
 
-  // If ship sunk, figure out where it was
+  // If we just sank a ship, we need to 'find' all its parts!
   if (impact == Shot::SUNKEN) {
     std::set<GridPosition> shipPositions;
-    shipPositions.insert(target);
+    shipPositions.insert(
+        target); // The square we just hit is definitely part of it
 
     char shipRow = target.getRow();
     int shipCol = target.getColumn();
 
     bool isHorizontal = false;
 
-    // Look left for more hits
+    // 1. Look to the LEFT for more hits/sunk markers belonging to this ship
     for (int col = shipCol - 1; col >= 1; col--) {
       GridPosition leftPos(shipRow, col);
       std::map<GridPosition, Shot::Impact>::iterator shotFindIt =
@@ -36,13 +45,14 @@ void OpponentGrid::shotResult(const Shot &shot, Shot::Impact impact) {
       if (shotFindIt != shots.end() && (shotFindIt->second == Shot::HIT ||
                                         shotFindIt->second == Shot::SUNKEN)) {
         shipPositions.insert(leftPos);
-        isHorizontal = true;
+        isHorizontal =
+            true; // If we found stuff left or right, it's a horizontal ship
       } else {
-        break;
+        break; // Hit a miss or water, stop looking
       }
     }
 
-    // Look right
+    // 2. Look to the RIGHT
     for (int col = shipCol + 1; col <= columns; col++) {
       GridPosition rightPos(shipRow, col);
       std::map<GridPosition, Shot::Impact>::iterator shotFindIt =
@@ -57,9 +67,9 @@ void OpponentGrid::shotResult(const Shot &shot, Shot::Impact impact) {
       }
     }
 
-    // If not horizontal, check vertical
+    // 3. If we didn't find anything sideways, it MUST be a vertical ship
     if (!isHorizontal) {
-      // Look up
+      // Look UP
       for (char row = shipRow - 1; row >= 'A'; row--) {
         GridPosition upPos(row, shipCol);
         std::map<GridPosition, Shot::Impact>::iterator shotFindIt =
@@ -73,7 +83,7 @@ void OpponentGrid::shotResult(const Shot &shot, Shot::Impact impact) {
         }
       }
 
-      // Look down
+      // Look DOWN
       char maxRow = 'A' + rows - 1;
       for (char row = shipRow + 1; row <= maxRow; row++) {
         GridPosition downPos(row, shipCol);
@@ -89,7 +99,8 @@ void OpponentGrid::shotResult(const Shot &shot, Shot::Impact impact) {
       }
     }
 
-    // Create ship from first and last position
+    // Now that we've found all the coordinates, we can 'reconstruct' the ship.
+    // The set is sorted, so the first and last items are the bow and stern!
     if (!shipPositions.empty()) {
       GridPosition bow = *shipPositions.begin();
       GridPosition stern = *shipPositions.rbegin();

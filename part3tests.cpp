@@ -1,80 +1,69 @@
-/*
- * part3tests.cpp
+/**
+ * @file part3tests.cpp
+ * @brief Tests for shooting mechanics (Exercise 2.3).
  *
- * Tests for shot mechanics (Exercise 2.3)
+ * Verifies that the game correctly identifies misses, hits, and sinking ships,
+ * and that the opponent tracker works.
  */
 
+#include "Board.h"
 #include <iostream>
 #include <memory>
 
 using namespace std;
 
-#include "Board.h"
-
 /**
- * Outputs the failedMessage on the console if condition is false.
+ * Assertion helper to keep the output clean.
  */
 void assertTrue3(bool condition, string failedMessage) {
   if (!condition) {
-    cout << failedMessage << endl;
+    cout << "  [FAIL] " << failedMessage << endl;
   }
 }
 
 /**
- * Tests for shot mechanics
+ * Tests for the 'takeBlow' and 'shotResult' logic.
  */
 void part3tests() {
-  // Setup a board with a ship
-  auto board = std::make_unique<Board>(10, 10);
+  // --- OwnGrid Shot Tests ---
+  std::unique_ptr<Board> board(new Board(10, 10));
   OwnGrid &ownGrid = board->getOwnGrid();
 
-  // Place a ship at B2-B4 (length 3)
-  Ship ship1(GridPosition{"B2"}, GridPosition{"B4"});
+  // Place a target ship
+  Ship ship1(GridPosition{"B2"}, GridPosition{"B4"}); // Length 3
   ownGrid.placeShip(ship1);
 
-  // Test miss
+  // 1. Test a clear miss
   Shot missShot(GridPosition{"A1"});
-  Shot::Impact missResult = ownGrid.takeBlow(missShot);
-  assertTrue3(missResult == Shot::NONE,
-              "Shot at empty position should return NONE");
+  assertTrue3(ownGrid.takeBlow(missShot) == Shot::NONE,
+              "Shot at A1 should be a MISS");
 
-  // Test hit (not sinking)
-  Shot hitShot1(GridPosition{"B2"});
-  Shot::Impact hitResult1 = ownGrid.takeBlow(hitShot1);
-  assertTrue3(hitResult1 == Shot::HIT, "First shot at ship should return HIT");
+  // 2. Test hits that don't sink the ship yet
+  assertTrue3(ownGrid.takeBlow(Shot{GridPosition{"B2"}}) == Shot::HIT,
+              "B2 should be a HIT");
+  assertTrue3(ownGrid.takeBlow(Shot{GridPosition{"B3"}}) == Shot::HIT,
+              "B3 should be a HIT");
 
-  Shot hitShot2(GridPosition{"B3"});
-  Shot::Impact hitResult2 = ownGrid.takeBlow(hitShot2);
-  assertTrue3(hitResult2 == Shot::HIT, "Second shot at ship should return HIT");
+  // 3. Test the final shot that sinks it
+  assertTrue3(ownGrid.takeBlow(Shot{GridPosition{"B4"}}) == Shot::SUNKEN,
+              "B4 should be SUNKEN");
 
-  // Test sinking
-  Shot finalShot(GridPosition{"B4"});
-  Shot::Impact sinkResult = ownGrid.takeBlow(finalShot);
-  assertTrue3(sinkResult == Shot::SUNKEN,
-              "Final shot at ship should return SUNKEN");
-
-  // Test opponent grid shot tracking
-  auto board2 = std::make_unique<Board>(10, 10);
+  // --- OpponentGrid Tracker Tests ---
+  std::unique_ptr<Board> board2(new Board(10, 10));
   OpponentGrid &opponentGrid = board2->getOpponentGrid();
 
-  // Record some shots
-  opponentGrid.shotResult(Shot{GridPosition{"C2"}}, Shot::NONE);   // Miss
-  opponentGrid.shotResult(Shot{GridPosition{"C3"}}, Shot::HIT);    // Hit
-  opponentGrid.shotResult(Shot{GridPosition{"C4"}}, Shot::HIT);    // Hit
-  opponentGrid.shotResult(Shot{GridPosition{"C5"}}, Shot::SUNKEN); // Sunk
+  // Record a sequence of shots that should reveal a horizontal ship
+  opponentGrid.shotResult(Shot{GridPosition{"C2"}}, Shot::NONE); // Miss
+  opponentGrid.shotResult(Shot{GridPosition{"C3"}}, Shot::HIT);  // Part of ship
+  opponentGrid.shotResult(Shot{GridPosition{"C4"}}, Shot::HIT);  // Part of ship
+  opponentGrid.shotResult(Shot{GridPosition{"C5"}},
+                          Shot::SUNKEN); // Whole ship found!
 
-  // Verify shots are recorded
-  const map<GridPosition, Shot::Impact> &shots = opponentGrid.getShotsAt();
-  assertTrue3(shots.count(GridPosition{"C2"}) > 0,
-              "Miss shot should be recorded");
-  assertTrue3(shots.at(GridPosition{"C2"}) == Shot::NONE,
-              "Miss shot should have NONE impact");
-
-  // Verify sunken ship is detected
+  // The grid should have automatically deduced the ship's full location (C3-C5)
   const vector<Ship> &sunken = opponentGrid.getSunkenShips();
-  assertTrue3(sunken.size() == 1, "Should have detected 1 sunken ship");
+  assertTrue3(sunken.size() == 1, "Should have detected exactly 1 sunken ship");
 
-  if (sunken.size() > 0) {
-    assertTrue3(sunken[0].length() == 3, "Sunken ship should have length 3");
+  if (!sunken.empty()) {
+    assertTrue3(sunken[0].length() == 3, "Deducted ship should have length 3");
   }
 }

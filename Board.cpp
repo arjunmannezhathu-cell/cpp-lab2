@@ -11,8 +11,10 @@
 /**
  * Creates a board of a certain size. In most cases, this will be 10x10.
  */
-Board::Board(int rows, int columns)
-    : ownGrid(rows, columns), opponentGrid(rows, columns) {}
+Board::Board(int rows, int columns) {
+  this->ownGrid = OwnGrid(rows, columns);
+  this->opponentGrid = OpponentGrid(rows, columns);
+}
 
 int Board::getRows() const { return ownGrid.getRows(); }
 

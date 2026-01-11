@@ -25,9 +25,13 @@ private:
 
 public:
   /**
-   * @brief Build a position from a character and an integer.
-   * @param row The row letter.
-   * @param column The column number.
+   * @brief Default constructor (creates an invalid position '0').
+   * Needed so we can create empty GridPositions before assigning them.
+   */
+  GridPosition();
+
+  /**
+   * Basic constructor that just sets the row letter and column number directly.
    */
   GridPosition(char row, int column);
 

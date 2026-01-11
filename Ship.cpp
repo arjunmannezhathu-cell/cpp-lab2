@@ -13,8 +13,10 @@
 /**
  * Creates a ship by defining its two endpoints (the bow and the stern).
  */
-Ship::Ship(const GridPosition &bow, const GridPosition &stern)
-    : bow(bow), stern(stern) {}
+Ship::Ship(const GridPosition &bow, const GridPosition &stern) {
+  this->bow = bow;
+  this->stern = stern;
+}
 
 /**
  * Checks if a ship is built correctly according to the rules:

@@ -9,11 +9,23 @@
 #include "OwnGrid.h"
 
 /**
- * Creates your grid and sets the initial fleet limits.
+ * Default Constructor.
+ * Sets default 10x10 size.
+ */
+OwnGrid::OwnGrid() {
+  this->rows = 0;
+  this->columns = 0;
+}
+
+/**
+ * Creates the grid and sets the initial fleet limits.
  * Default rules: 1x Carrier(5), 2x Battleships(4), 3x Destroyers(3), 4x
  * Submarines(2).
  */
-OwnGrid::OwnGrid(int rows, int columns) : rows(rows), columns(columns) {
+OwnGrid::OwnGrid(int rows, int columns) {
+  this->rows = rows;
+  this->columns = columns;
+
   availableShips[5] = 1;
   availableShips[4] = 2;
   availableShips[3] = 3;
@@ -25,7 +37,7 @@ int OwnGrid::getRows() const { return rows; }
 int OwnGrid::getColumns() const { return columns; }
 
 /**
- * The logic for placing a ship on your grid.
+ * The logic for placing a ship on the grid.
  * It checks a lot of rules to make sure the placement is legal.
  */
 bool OwnGrid::placeShip(const Ship &ship) {

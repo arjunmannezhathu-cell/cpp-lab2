@@ -9,8 +9,15 @@
 #include "OpponentGrid.h"
 #include <set>
 
-OpponentGrid::OpponentGrid(int rows, int columns)
-    : rows(rows), columns(columns) {}
+OpponentGrid::OpponentGrid() {
+  this->rows = 0;
+  this->columns = 0;
+}
+
+OpponentGrid::OpponentGrid(int rows, int columns) {
+  this->rows = rows;
+  this->columns = columns;
+}
 
 int OpponentGrid::getRows() const { return rows; }
 

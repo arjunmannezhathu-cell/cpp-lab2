@@ -33,6 +33,11 @@ private:
 
 public:
   /**
+   * @brief Default Constructor.
+   */
+  OwnGrid();
+
+  /**
    * @brief Create a grid with specific dimensions.
    */
   OwnGrid(int rows, int columns);

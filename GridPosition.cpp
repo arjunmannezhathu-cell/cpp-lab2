@@ -10,7 +10,16 @@
 #include <sstream>
 
 /**
- * Basic constructor that just sets the row letter and column number directly.
+ * Default Constructor.
+ * Sets values to 0 initially.
+ */
+GridPosition::GridPosition() {
+  this->row = 0;
+  this->column = 0;
+}
+
+/**
+ * constructor that just sets the row letter and column number directly.
  */
 GridPosition::GridPosition(char row, int column) {
   this->row = row;
@@ -18,11 +27,11 @@ GridPosition::GridPosition(char row, int column) {
 }
 
 /**
- * Special constructor that takes a string like "A10" and pulls it apart.
- * It's smart enough to handle different column lengths (1 vs 10).
+ * constructor that takes a string like "A10" and pulls it apart.
+ *
  */
 GridPosition::GridPosition(std::string position) {
-  // We need at least two characters (like 'A1') to even try parsing
+  // We need at least two characters (like 'A1') to  try parsing
   if (position.length() >= 2) {
     this->row = position[0]; // The first character is always our row (A-J)
 
@@ -38,7 +47,7 @@ GridPosition::GridPosition(std::string position) {
       this->column = 0;
     }
   } else {
-    // String was too short or weird, so we set invalid 'safety' values
+    // String was too short or invalid, so we set invalid 'safety' values
     this->row = '@';
     this->column = 0;
   }

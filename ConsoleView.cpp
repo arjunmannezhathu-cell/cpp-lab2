@@ -11,7 +11,7 @@
 #include <set>
 #include <vector>
 
-ConsoleView::ConsoleView(Board *board) : board(board) {}
+ConsoleView::ConsoleView(Board *board) { this->board = board; }
 
 /**
  * The main 'render' function. It builds two text-based grids side-by-side

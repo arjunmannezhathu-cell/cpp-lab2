@@ -160,14 +160,18 @@ void fullGameTest() {
              "Battleship 1 sunk");
 
   // (Remaining ships are sunk in the background here for brevity in logs...)
-  for (int i = 6; i <= 9; i++)
+  for (int i = 6; i <= 9; i++) {
     ownGrid.takeBlow(Shot{GridPosition('E', i)});
-  for (int i = 6; i <= 8; i++)
+  }
+  for (int i = 6; i <= 8; i++) {
     ownGrid.takeBlow(Shot{GridPosition('C', i)});
-  for (int i = 1; i <= 3; i++)
+  }
+  for (int i = 1; i <= 3; i++) {
     ownGrid.takeBlow(Shot{GridPosition('G', i)});
-  for (char r = 'G'; r <= 'I'; r++)
+  }
+  for (char r = 'G'; r <= 'I'; r++) {
     ownGrid.takeBlow(Shot{GridPosition(r, 5)});
+  }
   ownGrid.takeBlow(Shot{GridPosition{"G7"}});
   ownGrid.takeBlow(Shot{GridPosition{"G8"}});
   ownGrid.takeBlow(Shot{GridPosition{"I7"}});

@@ -8,6 +8,8 @@
 /**
  * Creates a shot aimed at a specific coordinate.
  */
-Shot::Shot(GridPosition targetPosition) : targetPosition(targetPosition) {}
+Shot::Shot(GridPosition targetPosition) {
+  this->targetPosition = targetPosition;
+}
 
 GridPosition Shot::getTargetPosition() const { return targetPosition; }

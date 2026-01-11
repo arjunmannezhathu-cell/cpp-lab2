@@ -25,7 +25,7 @@ void assertTrue2(bool condition, string failedMessage) {
  * Tests for ship placement logic.
  */
 void part2tests() {
-  // We use a unique_ptr for the board to practice modern C++ memory management
+  // We use a unique_ptr for the board creation
   std::unique_ptr<Board> board(new Board(10, 10));
   OwnGrid &grid = board->getOwnGrid();
 

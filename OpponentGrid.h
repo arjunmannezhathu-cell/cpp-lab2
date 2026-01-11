@@ -32,6 +32,11 @@ private:
 
 public:
   /**
+   * @brief Default Constructor.
+   */
+  OpponentGrid();
+
+  /**
    * @brief Create a grid to track an opponent of a certain size.
    */
   OpponentGrid(int rows, int columns);

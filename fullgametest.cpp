@@ -8,6 +8,7 @@
 #include "Board.h"
 #include "ConsoleView.h"
 #include <iostream>
+#include <memory>
 #include <string>
 
 using namespace std;
@@ -41,10 +42,10 @@ void fullGameTest() {
   // =========================================
   printSeparator("PHASE 1: Ship Placement");
 
-  Board board(10, 10);
-  ConsoleView view(&board);
-  OwnGrid &ownGrid = board.getOwnGrid();
-  OpponentGrid &opponentGrid = board.getOpponentGrid();
+  auto board = std::make_unique<Board>(10, 10);
+  ConsoleView view(board.get());
+  OwnGrid &ownGrid = board->getOwnGrid();
+  OpponentGrid &opponentGrid = board->getOpponentGrid();
 
   cout << "\nPlacing all 10 ships according to German Battleship rules:"
        << endl;
@@ -114,12 +115,12 @@ void fullGameTest() {
              "Cannot place extra submarine (limit reached)");
 
   // Try to place ship that touches another
-  Board board2(10, 10);
-  board2.getOwnGrid().placeShip(Ship{GridPosition{"E5"}, GridPosition{"E7"}});
-  assertTest(!board2.getOwnGrid().placeShip(
+  auto board2 = std::make_unique<Board>(10, 10);
+  board2->getOwnGrid().placeShip(Ship{GridPosition{"E5"}, GridPosition{"E7"}});
+  assertTest(!board2->getOwnGrid().placeShip(
                  Ship{GridPosition{"D5"}, GridPosition{"D7"}}),
              "Cannot place ship touching another (adjacent row)");
-  assertTest(!board2.getOwnGrid().placeShip(
+  assertTest(!board2->getOwnGrid().placeShip(
                  Ship{GridPosition{"F4"}, GridPosition{"F6"}}),
              "Cannot place ship touching another (diagonal)");
 
@@ -136,9 +137,9 @@ void fullGameTest() {
   assertTest(!tooLong.isValid(), "Ship of length 6 is invalid");
 
   // Try to place ship out of bounds
-  Board board3(10, 10);
+  auto board3 = std::make_unique<Board>(10, 10);
   Ship outOfBounds(GridPosition{"J9"}, GridPosition{"J12"});
-  assertTest(!board3.getOwnGrid().placeShip(outOfBounds),
+  assertTest(!board3->getOwnGrid().placeShip(outOfBounds),
              "Cannot place ship out of bounds");
 
   // =========================================

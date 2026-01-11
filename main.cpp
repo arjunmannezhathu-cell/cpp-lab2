@@ -10,6 +10,7 @@
 void part1tests();
 void part2tests();
 void part3tests();
+void runFullGameTest();
 
 int main() {
   std::cout << "=== Running Part 1 Tests ===" << std::endl;
@@ -26,6 +27,9 @@ int main() {
   part3tests();
   std::cout << "Part 3 tests completed." << std::endl;
   std::cout << std::endl;
+
+  std::cout << "=== Running Full Game Test ===" << std::endl;
+  runFullGameTest();
 
   return 0;
 }

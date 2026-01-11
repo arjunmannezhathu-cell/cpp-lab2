@@ -5,6 +5,7 @@
  */
 
 #include <iostream>
+#include <memory>
 
 using namespace std;
 
@@ -24,8 +25,8 @@ void assertTrue2(bool condition, string failedMessage) {
  */
 void part2tests() {
   // Test basic ship placement
-  Board board(10, 10);
-  OwnGrid &grid = board.getOwnGrid();
+  auto board = std::make_unique<Board>(10, 10);
+  OwnGrid &grid = board->getOwnGrid();
 
   // Valid ship placement
   Ship ship1(GridPosition{"B2"}, GridPosition{"B4"}); // Length 3 - Destroyer
@@ -44,8 +45,8 @@ void part2tests() {
               "Should be able to place ship with proper gap");
 
   // Test ship count limits
-  Board board2(10, 10);
-  OwnGrid &grid2 = board2.getOwnGrid();
+  auto board2 = std::make_unique<Board>(10, 10);
+  OwnGrid &grid2 = board2->getOwnGrid();
 
   // Can place 4 submarines (length 2)
   assertTrue2(grid2.placeShip(Ship{GridPosition{"A1"}, GridPosition{"A2"}}),
@@ -62,8 +63,8 @@ void part2tests() {
               "Should not be able to place 5th submarine");
 
   // Test ship must be within grid bounds
-  Board board3(10, 10);
-  OwnGrid &grid3 = board3.getOwnGrid();
+  auto board3 = std::make_unique<Board>(10, 10);
+  OwnGrid &grid3 = board3->getOwnGrid();
 
   Ship outOfBounds(GridPosition{"J9"},
                    GridPosition{"J12"}); // Column 11-12 out of bounds

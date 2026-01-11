@@ -5,6 +5,7 @@
  */
 
 #include <iostream>
+#include <memory>
 
 using namespace std;
 
@@ -24,8 +25,8 @@ void assertTrue3(bool condition, string failedMessage) {
  */
 void part3tests() {
   // Setup a board with a ship
-  Board board(10, 10);
-  OwnGrid &ownGrid = board.getOwnGrid();
+  auto board = std::make_unique<Board>(10, 10);
+  OwnGrid &ownGrid = board->getOwnGrid();
 
   // Place a ship at B2-B4 (length 3)
   Ship ship1(GridPosition{"B2"}, GridPosition{"B4"});
@@ -53,8 +54,8 @@ void part3tests() {
               "Final shot at ship should return SUNKEN");
 
   // Test opponent grid shot tracking
-  Board board2(10, 10);
-  OpponentGrid &opponentGrid = board2.getOpponentGrid();
+  auto board2 = std::make_unique<Board>(10, 10);
+  OpponentGrid &opponentGrid = board2->getOpponentGrid();
 
   // Record some shots
   opponentGrid.shotResult(Shot{GridPosition{"C2"}}, Shot::NONE);   // Miss
